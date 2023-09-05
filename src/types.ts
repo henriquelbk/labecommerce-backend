@@ -3,7 +3,7 @@ export type Users = {
     name: string,
     email: string,
     password: string,
-    createdAt: string // falta o formato (ano-mês-dia T hora:minuto:segundo:milésimo-de-segundos Z)
+    createdAt: string 
 }
 
 export type Products = {

@@ -3,3 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = require("./database");
 console.log("app iniciado");
 console.log(database_1.users, database_1.products);
+//createUser("003", 'Fernando', 'fernando@email.com', 'askfjhap');
+(0, database_1.createProduct)('p003', 'foguete a025', 335.000, 'Foguete grande', 'https://picsum.photos/seed/Rocket/400');
+(0, database_1.getAllUsers)();
+(0, database_1.getAllProducts)();
+(0, database_1.searchProductsByName)('foguete a024');
