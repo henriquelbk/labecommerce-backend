@@ -1,4 +1,4 @@
-export type Users = {
+export type TUsers = {
     id: string,
     name: string,
     email: string,
@@ -6,7 +6,7 @@ export type Users = {
     createdAt: string 
 }
 
-export type Products = {
+export type TProducts = {
     id: string,
     name: string,
     price: number,

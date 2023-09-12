@@ -1,6 +1,6 @@
-import { Products, Users } from './types'
+import { TProducts, TUsers } from './types'
 
-export const users: Users[] = [
+export const users: TUsers[] = [
     {
         id: "u001",
         name: "Fulano",
@@ -17,7 +17,7 @@ export const users: Users[] = [
     }
 ]
 
-export const products: Products[] = [
+export const products: TProducts[] = [
     {
         id: "p001",
         name: "foguete a023",
@@ -34,7 +34,7 @@ export const products: Products[] = [
     }
 ]
 
-export const createUser = (id: string, name: string, email: string, password: string): Users[] => {
+export const createUser = (id: string, name: string, email: string, password: string): TUsers[] => {
 
     const novoUsuario = {
         id: id,
@@ -52,14 +52,14 @@ export const createUser = (id: string, name: string, email: string, password: st
     return users;
 }
 
-export const getAllUsers = (): Users[] => {
+export const getAllUsers = (): TUsers[] => {
 
     console.table(users)
 
     return users
 }
 
-export const createProduct = (id: string, name: string, price: number, description: string, imageUrl: string): Products[] => {
+export const createProduct = (id: string, name: string, price: number, description: string, imageUrl: string): TProducts[] => {
 
     const novoProduto = { id, name, price, description, imageUrl }
 
@@ -75,7 +75,7 @@ export const getAllProducts = () => {
     return products
 }
 
-export const searchProductsByName = (name: string): Products[] => {
+export const searchProductsByName = (name: string): TProducts[] => {
     name = name.toLowerCase()
     const matchingProducts = products.filter(product => product.name.toLowerCase().includes(name))
 
