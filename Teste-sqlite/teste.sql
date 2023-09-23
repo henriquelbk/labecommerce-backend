@@ -6,11 +6,45 @@ CREATE TABLE customers (
 	age INTEGER NOT NULL
 );
 
--- comentário (iniciamos comentários com dois traços --)
+-- Visualizando dados de uma tabela
 
--- nova query A aqui
+SELECT * FROM customers; 
 
--- nova query B aqui
+-- Visualizando estrutura de uma tabela
 
--- opa, esqueci se a coluna age da tabela customers é INTEGER ou TEXT...
--- é só voltar lendo as queries e pronto!
+PRAGMA table_info('customers')
+
+-- Inserindo item na tabela
+
+INSERT INTO customers (id, name, email, age)
+VALUES ('c001','astrodev', 'astro@email.com', 32);
+
+-- Inserindo múltiplos itens na tabela
+
+INSERT INTO customers (id, name, email, age)
+VALUES 
+	('c002','astr', 'astr@email.com', 22),
+	('c003','rodev', 'ro@email.com', 65);
+
+-- Editando itens na tabela
+
+UPDATE customers 
+SET 
+	email = 'astrooo@email.com',
+	age = 44
+WHERE id = 'c001'; -- update sem where é meme
+
+-- Deletar item da tabela
+
+DELETE FROM customers 
+WHERE id = 'c002'; -- delete sem where é meme
+
+-- Deletar a tabela
+
+DROP TABLE customers;
+
+-- Fizemos o CRUD do SQL
+-- Create
+-- Read
+-- Update
+-- Delete
