@@ -1,11 +1,6 @@
 import {
   users,
   products,
-  createUser,
-  createProduct,
-  getAllUsers,
-  getAllProducts,
-  searchProductsByName,
 } from "./database";
 import { TProducts, TUsers } from "./types";
 import express, { Request, Response } from "express";
@@ -24,37 +19,109 @@ app.get("/ping", (req: Request, res: Response) => {
   res.send("Pong!");
 });
 
-// Endpoints GET
+// GET all users
 
 app.get("/users", (req: Request, res: Response) => {
+  try {
+
   const allUsers: TUsers[] = users;
-  res.status(200).send(users);
+  res.status(200).send(allUsers);
+
+  } catch(err: any) {
+
+      console.log(err) // print do erro no terminal para facilitar o debug
+      res.status(400).send(err.message)
+
+  }
 });
+
+// GET all products
 
 app.get("/products", (req: Request, res: Response) => {
+  try{
+
   const allProducts: TProducts[] = products;
-  res.status(200).send(products);
+  res.status(200).send(allProducts);
+
+  } catch(err: any) {
+
+    console.log(err) // print do erro no terminal para facilitar o debug
+    res.status(400).send(err.message)
+
+}
 });
 
-// Endpoints POST
+// Create users
 
 app.post("/users", (req: Request, res: Response) => {
+  try {
   const { id, name, email, password }: TUsers = req.body;
+  const verificaId: TUsers | undefined =  users.find((user) => user.id === id)
+  const verificaEmail: TUsers | undefined =  users.find((user) => user.email === email)
 
-  // const newUser: TUsers = {
-  //     id,
-  //     name,
-  //     email,
-  //     password,
-  //     createdAt,
-  // }
-  const newUser = createUser(id, name, email, password);
+  if (verificaId) {
+    throw new Error("Id já cadastrado.")
+  }
+  if (verificaEmail) {
+    throw new Error("E-mail já cadastrado.")
+  }
+  if (typeof id !== 'string') {
+    throw new Error("'id' deve ser uma string")
+  }
+  if (typeof name !== 'string') {
+    throw new Error("'name' deve ser uma string")
+  }
+  if (typeof email !== 'string') {
+    throw new Error("'email' deve ser uma string")
+  }
+  if (typeof password !== 'string') {
+    throw new Error("'password' deve ser uma string")
+  }
 
-  res.status(201).send(newUser);
+  const newUser: TUsers = {
+      id,
+      name,
+      email,
+      password
+  }
+  users.push(newUser)
+
+  res.status(201).send("Usuário cadastrado com sucesso");
+
+} catch (err) {
+  if (err instanceof Error) {
+    res.send(err.message);
+  }
+}
+
 });
 
+// Create products
+
 app.post("/products", (req: Request, res: Response) => {
+  try{
+
   const { id, name, price, description, imageUrl }: TProducts = req.body;
+  const verificaId: TProducts | undefined =  products.find((product) => product.id === id)
+
+  if (verificaId) {
+    throw new Error("Id já cadastrado.")
+  }
+  if (typeof id !== 'string') {
+    throw new Error("'id' deve ser uma string")
+  }
+  if (typeof name !== 'string') {
+    throw new Error("'name' deve ser uma string")
+  }
+  if (typeof price !== 'number') {
+    throw new Error("'price' deve ser uma number")
+  }
+  if (typeof description !== 'string') {
+    throw new Error("'description' deve ser uma string")
+  }
+  if (typeof imageUrl !== 'string') {
+    throw new Error("'imageUrl' deve ser uma string")
+  }
 
   const newProduct: TProducts = {
     id,
@@ -66,12 +133,26 @@ app.post("/products", (req: Request, res: Response) => {
   products.push(newProduct);
 
   res.status(201).send("Novo produto registrado com sucesso");
+} catch (err) {
+
+  if (err instanceof Error) {
+    res.send(err.message);
+  }
+}
 });
 
-app.delete("/users/:id", (req: Request, res: Response) => {
-  const id = req.params.id;
+// Delete user by id
 
+app.delete("/users/:id", (req: Request, res: Response) => {
+try {
+
+  const id = req.params.id;
   const indexToDelete = users.findIndex((user) => user.id === id);
+  const verificaId: TUsers | undefined =  users.find((user) => user.id === id)
+
+  if (!verificaId) {
+    throw new Error("Id não cadastrado.")
+  }
 
   if (indexToDelete !== -1) {
     users.splice(indexToDelete, 1);
@@ -80,12 +161,27 @@ app.delete("/users/:id", (req: Request, res: Response) => {
   }
 
   res.status(200).send("User deletado com sucesso!");
+} catch (err) {
+
+  if (err instanceof Error) {
+    res.send(err.message);
+  }
+}
+
 });
 
-app.delete("/products/:id", (req: Request, res: Response) => {
-  const id = req.params.id;
+// Delete product by id
 
+app.delete("/products/:id", (req: Request, res: Response) => {
+  try{
+
+  const id = req.params.id;
   const indexToDelete = products.findIndex((product) => product.id === id);
+  const verificaId: TProducts | undefined =  products.find((product) => product.id === id)
+
+  if (!verificaId) {
+    throw new Error("Id não cadastrado.")
+  }
 
   if (indexToDelete !== -1) {
     products.splice(indexToDelete, 1);
@@ -94,9 +190,19 @@ app.delete("/products/:id", (req: Request, res: Response) => {
   }
 
   res.status(200).send("Product deletado com sucesso!");
+} catch (err) {
+
+  if (err instanceof Error) {
+    res.send(err.message);
+  }
+}
 });
 
+// Update product by id
+
 app.put("/products/:id", (req: Request, res: Response) => {
+  try {
+
   const id = req.params.id;
   const newName = req.body.name as string | undefined;
   const newPrice = req.body.price as number | undefined;
@@ -104,6 +210,24 @@ app.put("/products/:id", (req: Request, res: Response) => {
   const newImageUrl = req.body.imageUrl as string | undefined;
 
   const product = products.find((product) => product.id === id);
+
+  const verificaId: TProducts | undefined =  products.find((product) => product.id === id)
+
+  if (!verificaId) {
+    throw new Error("Id não cadastrado.")
+  }
+  if (typeof newName !== "string" && "undefined") {
+    throw new Error("Name com tipo errado.")
+  }
+  if (typeof newPrice !== "number" && "undefined") {
+    throw new Error("Price com tipo errado.")
+  }
+  if (typeof newDescription !== "string" && "undefined") {
+    throw new Error("Description com tipo errado.")
+  }
+  if (typeof newImageUrl !== "string" && "undefined") {
+    throw new Error("ImageUrl com tipo errado.")
+  }
 
   if (product) {
     product.name = newName || product.name;
@@ -113,4 +237,10 @@ app.put("/products/:id", (req: Request, res: Response) => {
   }
 
   res.status(200).send("Produto atualizado com sucesso");
+} catch (err) {
+
+  if (err instanceof Error) {
+    res.send(err.message);
+  }
+}
 });
