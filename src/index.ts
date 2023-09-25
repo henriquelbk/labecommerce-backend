@@ -60,21 +60,27 @@ app.post("/users", (req: Request, res: Response) => {
   const verificaEmail: TUsers | undefined =  users.find((user) => user.email === email)
 
   if (verificaId) {
+    res.statusCode = 400;
     throw new Error("Id já cadastrado.")
   }
   if (verificaEmail) {
+    res.statusCode = 400;
     throw new Error("E-mail já cadastrado.")
   }
   if (typeof id !== 'string') {
+    res.statusCode = 400;
     throw new Error("'id' deve ser uma string")
   }
   if (typeof name !== 'string') {
+    res.statusCode = 400;
     throw new Error("'name' deve ser uma string")
   }
   if (typeof email !== 'string') {
+    res.statusCode = 400;
     throw new Error("'email' deve ser uma string")
   }
   if (typeof password !== 'string') {
+    res.statusCode = 400;
     throw new Error("'password' deve ser uma string")
   }
 
@@ -105,21 +111,27 @@ app.post("/products", (req: Request, res: Response) => {
   const verificaId: TProducts | undefined =  products.find((product) => product.id === id)
 
   if (verificaId) {
+    res.statusCode = 400;
     throw new Error("Id já cadastrado.")
   }
   if (typeof id !== 'string') {
+    res.statusCode = 400;
     throw new Error("'id' deve ser uma string")
   }
   if (typeof name !== 'string') {
+    res.statusCode = 400;
     throw new Error("'name' deve ser uma string")
   }
   if (typeof price !== 'number') {
+    res.statusCode = 400;
     throw new Error("'price' deve ser uma number")
   }
   if (typeof description !== 'string') {
+    res.statusCode = 400;
     throw new Error("'description' deve ser uma string")
   }
   if (typeof imageUrl !== 'string') {
+    res.statusCode = 400;
     throw new Error("'imageUrl' deve ser uma string")
   }
 
@@ -151,6 +163,7 @@ try {
   const verificaId: TUsers | undefined =  users.find((user) => user.id === id)
 
   if (!verificaId) {
+    res.statusCode = 400;
     throw new Error("Id não cadastrado.")
   }
 
@@ -180,6 +193,7 @@ app.delete("/products/:id", (req: Request, res: Response) => {
   const verificaId: TProducts | undefined =  products.find((product) => product.id === id)
 
   if (!verificaId) {
+    res.statusCode = 400;
     throw new Error("Id não cadastrado.")
   }
 
@@ -203,31 +217,36 @@ app.delete("/products/:id", (req: Request, res: Response) => {
 app.put("/products/:id", (req: Request, res: Response) => {
   try {
 
-  const id = req.params.id;
+  const id: string = req.params.id;
   const newName = req.body.name as string | undefined;
   const newPrice = req.body.price as number | undefined;
   const newDescription = req.body.description as string | undefined;
   const newImageUrl = req.body.imageUrl as string | undefined;
 
-  const product = products.find((product) => product.id === id);
-
   const verificaId: TProducts | undefined =  products.find((product) => product.id === id)
 
   if (!verificaId) {
+    res.statusCode = 400;
     throw new Error("Id não cadastrado.")
   }
-  if (typeof newName !== "string" && "undefined") {
+  if (typeof newName !== "string") {
+    res.statusCode = 400;
     throw new Error("Name com tipo errado.")
   }
-  if (typeof newPrice !== "number" && "undefined") {
+  if (typeof newPrice !== "number" || "undefined") {
+    res.statusCode = 400;
     throw new Error("Price com tipo errado.")
   }
-  if (typeof newDescription !== "string" && "undefined") {
+  if (typeof newDescription !== "string") {
+    res.statusCode = 400;
     throw new Error("Description com tipo errado.")
   }
-  if (typeof newImageUrl !== "string" && "undefined") {
+  if (typeof newImageUrl !== "string") {
+    res.statusCode = 400;
     throw new Error("ImageUrl com tipo errado.")
   }
+
+  const product: TProducts | undefined = products.find((product) => product.id === id);
 
   if (product) {
     product.name = newName || product.name;
