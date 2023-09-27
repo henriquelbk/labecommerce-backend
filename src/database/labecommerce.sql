@@ -56,15 +56,17 @@ CREATE TABLE users (
   name TEXT NOT NULL,
   email TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
-  created_at TEXT NOT NULL
+  created_at TEXT DEFAULT(DATETIME()) NOT NULL
 );
 
-INSERT INTO users (id, name, email, password, created_at)
-VALUES ('u001', 'mariano', 'mariano@email.com', 'hjabcs', 'Date(now).toISOSring()'),
-('u002', 'luciano', 'luciano@email.com', 'hasxjabcs', 'Date(now).toISOSring()'),
-('u003', 'adriano', 'adriano@email.com', 'hjabgbvwscs', 'Date(now).toISOSring()');
+INSERT INTO users (id, name, email, password)
+VALUES ('u001', 'mariano', 'mariano@email.com', 'hjabcs'),
+('u002', 'luciano', 'luciano@email.com', 'hasxjabcs'),
+('u003', 'adriano', 'adriano@email.com', 'hjabgbvwscs');
 
 SELECT * FROM users;
+
+DROP TABLE users;
 
 -- Products
 
