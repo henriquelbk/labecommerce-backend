@@ -49,6 +49,8 @@
 -- -- Update
 -- -- Delete
 
+-- EXERCICIOS DO PROJETO
+
 -- Users
 
 CREATE TABLE users (
@@ -66,6 +68,12 @@ VALUES ('u001', 'mariano', 'mariano@email.com', 'hjabcs'),
 
 SELECT * FROM users;
 
+INSERT INTO users (id, name, email, password)
+VALUES ('u004', 'cassiano', 'cassiano@taldoemail.com', 'vsdvsd');
+
+DELETE FROM users
+WHERE id = 'u003';
+
 DROP TABLE users;
 
 -- Products
@@ -79,10 +87,30 @@ CREATE TABLE products (
 );
 
 INSERT INTO products (id, name, price, description, image_url)
-VALUES ('P001', 'foguete imenso', 230000, 'foguete de carga imenso', 'https://picsum.photos/seed/Rocket/400'),
-('P002', 'foguete colossal', 3800000, 'foguete de carga planetário', 'https://picsum.photos/seed/Rocket/400'),
-('P003', 'foguete pequeno', 12000, 'foguete de carga pequeno', 'https://picsum.photos/seed/Rocket/400'),
-('P004', 'nave individual', 18000, 'nave para viagens solo', 'https://picsum.photos/seed/Rocket/400'),
-('P005', 'nave militar', 340000, 'nave de guerra', 'https://picsum.photos/seed/Rocket/400');
+VALUES ('p001', 'foguete imenso', 230000, 'foguete de carga imenso', 'https://picsum.photos/seed/Rocket/400'),
+('p002', 'foguete colossal', 3800000, 'foguete de carga planetário', 'https://picsum.photos/seed/Rocket/400'),
+('p003', 'foguete pequeno', 12000, 'foguete de carga pequeno', 'https://picsum.photos/seed/Rocket/400'),
+('p004', 'nave individual', 18000, 'nave para viagens solo', 'https://picsum.photos/seed/Rocket/400'),
+('p005', 'nave militar', 340000, 'nave de guerra', 'https://picsum.photos/seed/Rocket/400');
 
 SELECT * FROM products;
+
+SELECT * FROM products
+WHERE name LIKE '%nave%';
+
+INSERT INTO products (id, name, price, description, image_url)
+VALUES ('p006', 'nave de luxo', 420000, 'nave cruzeiro', 'https://picsum.photos/seed/Rocket/400');
+
+DELETE FROM products
+WHERE id = 'p003';
+
+UPDATE products
+SET
+id = 'p002',
+name = 'nave colossal',
+price = 390000000,
+description = 'nave de carga planetária',
+image_url = 'https://picsum.photos/seed/Rocket/400'
+WHERE id = 'p002';
+
+DROP TABLE products;
