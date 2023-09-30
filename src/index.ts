@@ -94,7 +94,7 @@ app.post("/users", (req: Request, res: Response) => {
 
   res.status(201).send("Usuário cadastrado com sucesso");
 
-} catch (err) {
+} catch (err: any) {
   if (err instanceof Error) {
     res.send(err.message);
   }
@@ -145,7 +145,7 @@ app.post("/products", (req: Request, res: Response) => {
   products.push(newProduct);
 
   res.status(201).send("Novo produto registrado com sucesso");
-} catch (err) {
+} catch (err: any) {
 
   if (err instanceof Error) {
     res.send(err.message);
@@ -174,7 +174,7 @@ try {
   }
 
   res.status(200).send("User deletado com sucesso!");
-} catch (err) {
+} catch (err: any) {
 
   if (err instanceof Error) {
     res.send(err.message);
@@ -204,7 +204,7 @@ app.delete("/products/:id", (req: Request, res: Response) => {
   }
 
   res.status(200).send("Product deletado com sucesso!");
-} catch (err) {
+} catch (err: any) {
 
   if (err instanceof Error) {
     res.send(err.message);
@@ -225,6 +225,8 @@ app.put("/products/:id", (req: Request, res: Response) => {
 
   const verificaId: TProducts | undefined =  products.find((product) => product.id === id)
 
+    console.log(newPrice)
+
   if (!verificaId) {
     res.statusCode = 400;
     throw new Error("Id não cadastrado.")
@@ -233,7 +235,7 @@ app.put("/products/:id", (req: Request, res: Response) => {
     res.statusCode = 400;
     throw new Error("Name com tipo errado.")
   }
-  if (typeof newPrice !== "number" || "undefined") {
+  if (typeof newPrice !== "number" && typeof newPrice !== "undefined") {
     res.statusCode = 400;
     throw new Error("Price com tipo errado.")
   }
@@ -241,7 +243,7 @@ app.put("/products/:id", (req: Request, res: Response) => {
     res.statusCode = 400;
     throw new Error("Description com tipo errado.")
   }
-  if (typeof newImageUrl !== "string") {
+  if (typeof newImageUrl !== "string" && typeof newImageUrl !== "undefined") {
     res.statusCode = 400;
     throw new Error("ImageUrl com tipo errado.")
   }
@@ -256,10 +258,17 @@ app.put("/products/:id", (req: Request, res: Response) => {
   }
 
   res.status(200).send("Produto atualizado com sucesso");
-} catch (err) {
+} catch (err: any) {
 
   if (err instanceof Error) {
     res.send(err.message);
   }
+
+  // se chegar ainda valendo 200 sabemos que foi um erro inesperado
+  // if (res.statusCode === 200) {
+  //   res.status(500) // definimos 500 porque é algo que o servidor não previu
+  // }
+
+  
 }
 });
