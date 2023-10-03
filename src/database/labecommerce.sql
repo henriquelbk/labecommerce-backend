@@ -1,4 +1,5 @@
 -- Active: 1695691185516@@127.0.0.1@3306
+
 -- CREATE TABLE customers (
 -- 	id TEXT PRIMARY KEY UNIQUE NOT NULL,
 -- 	name TEXT NOT NULL,
@@ -62,7 +63,8 @@ CREATE TABLE users (
 );
 
 INSERT INTO users (id, name, email, password)
-VALUES ('u001', 'mariano', 'mariano@email.com', 'hjabcs'),
+VALUES 
+('u001', 'mariano', 'mariano@email.com', 'hjabcs'),
 ('u002', 'luciano', 'luciano@email.com', 'hasxjabcs'),
 ('u003', 'adriano', 'adriano@email.com', 'hjabgbvwscs');
 
@@ -87,7 +89,8 @@ CREATE TABLE products (
 );
 
 INSERT INTO products (id, name, price, description, image_url)
-VALUES ('p001', 'foguete imenso', 230000, 'foguete de carga imenso', 'https://picsum.photos/seed/Rocket/400'),
+VALUES 
+('p001', 'foguete imenso', 230000, 'foguete de carga imenso', 'https://picsum.photos/seed/Rocket/400'),
 ('p002', 'foguete colossal', 3800000, 'foguete de carga planetário', 'https://picsum.photos/seed/Rocket/400'),
 ('p003', 'foguete pequeno', 12000, 'foguete de carga pequeno', 'https://picsum.photos/seed/Rocket/400'),
 ('p004', 'nave individual', 18000, 'nave para viagens solo', 'https://picsum.photos/seed/Rocket/400'),
@@ -99,7 +102,8 @@ SELECT * FROM products
 WHERE name LIKE '%nave%';
 
 INSERT INTO products (id, name, price, description, image_url)
-VALUES ('p006', 'nave de luxo', 420000, 'nave cruzeiro', 'https://picsum.photos/seed/Rocket/400');
+VALUES 
+('p006', 'nave de luxo', 420000, 'nave cruzeiro', 'https://picsum.photos/seed/Rocket/400');
 
 DELETE FROM products
 WHERE id = 'p003';
@@ -114,3 +118,33 @@ image_url = 'https://picsum.photos/seed/Rocket/400'
 WHERE id = 'p002';
 
 DROP TABLE products;
+
+-- Exercício de Relações SQL 1
+
+CREATE TABLE purchases (
+  id TEXT PRIMARY KEY UNIQUE NOT NULL,
+  buyer TEXT NOT NULL,
+  total_price REAL NOT NULL,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY(buyer) REFERENCES users(id)
+);
+
+INSERT INTO purchases 
+VALUES 
+('P001', 'u001', 234764328, '20/04/2023'),
+('P002', 'u002', 6432, '12/07/2023'),
+('P003', 'u003', 47642, '02/11/2023'),
+('P004', 'u004', 76438, '22/01/2021');
+
+SELECT * FROM purchases;
+
+UPDATE purchases 
+SET 
+total_price = 777777
+WHERE id = 'P001';
+
+SELECT purchases.id, purchases.buyer, users.name, users.email, purchases.total_price AS 'Custo', purchases.created_at AS 'Data da Compra' FROM purchases
+INNER JOIN users 
+ON users.id = purchases.buyer
+
+DROP TABLE purchases;
