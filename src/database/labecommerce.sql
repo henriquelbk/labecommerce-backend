@@ -125,20 +125,20 @@ CREATE TABLE purchases (
   id TEXT PRIMARY KEY UNIQUE NOT NULL,
   buyer TEXT NOT NULL,
   total_price REAL NOT NULL,
-  created_at TEXT NOT NULL,
+  created_at TEXT DEFAULT(DATETIME('now', 'localtime')) NOT NULL,
   FOREIGN KEY(buyer) REFERENCES users(id)
 );
 
-INSERT INTO purchases 
+INSERT INTO purchases (id, buyer, total_price)
 VALUES 
-('P001', 'u001', 234764328, '20/04/2023'),
-('P002', 'u002', 6432, '12/07/2023'),
-('P003', 'u003', 47642, '02/11/2023'),
-('P004', 'u004', 76438, '22/01/2021');
+('P001', 'u001', 234764328),
+('P002', 'u002', 6432),
+('P003', 'u003', 47642),
+('P004', 'u004', 76438);
 
 SELECT * FROM purchases;
 
-UPDATE purchases 
+UPDATE purchases
 SET 
 total_price = 777777
 WHERE id = 'P001';
