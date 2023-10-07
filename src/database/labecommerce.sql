@@ -127,6 +127,8 @@ CREATE TABLE purchases (
   total_price REAL NOT NULL,
   created_at TEXT DEFAULT(DATETIME('now', 'localtime')) NOT NULL,
   FOREIGN KEY(buyer) REFERENCES users(id)
+  ON UPDATE CASCADE
+  ON DELETE CASCADE
 );
 
 INSERT INTO purchases (id, buyer, total_price)
@@ -148,3 +150,29 @@ INNER JOIN users
 ON users.id = purchases.buyer
 
 DROP TABLE purchases;
+
+-- Exercicio relações SQL 2 (m:n)
+
+CREATE TABLE purchases_products (
+  purchase_id TEXT NOT NULL,
+  product_id TEXT NOT NULL,
+  quantity INTEGER NOT NULL,
+  FOREIGN KEY (purchase_id) REFERENCES purchases (id) 
+  FOREIGN KEY (product_id) REFERENCES products (id)
+  ON UPDATE CASCADE
+  ON DELETE CASCADE
+);
+
+INSERT INTO purchases_products
+VALUES 
+('P001', 'p002', 5),
+('P001', 'p004', 4),
+('P002', 'p001', 12),
+('P003', 'p002', 1);
+
+SELECT purchases_products.*, purchases.*, products.*
+FROM purchases_products
+INNER JOIN purchases ON purchases_products.purchase_id = purchases.id
+INNER JOIN products ON purchases_products.product_id = products.id;
+
+DROP TABLE purchases_products;
