@@ -1,0 +1,32 @@
+GET http://localhost:3003/ping
+###
+
+GET http://localhost:3003/users
+###
+
+GET http://localhost:3003/products
+###
+
+POST http://localhost:3003/users
+Content-Type: application/json
+
+{
+    "id": "u003",
+    "name": "Astrodev",
+    "email": "astrodev@email.com",
+    "password": "astrodev00"
+}
+###
+
+POST http://localhost:3003/products
+Content-Type: application/json
+
+{
+    "id": "prod003",
+    "name": "Teclado gamer",
+    "price": 200,
+    "description": "Teclado mecânico com numpad",
+    "imageUrl": "https://picsum.photos/seed/Teclado%20gamer/400"
+}
+###
+
