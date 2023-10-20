@@ -34,9 +34,8 @@ app.get("/ping", async (req: Request, res: Response) => {
 
 app.get("/users", async (req: Request, res: Response) => {
   try {
-    const result: TUsers[] = await db.raw(`SELECT * FROM users`);
+    const result: TUsers[] = await db("users");
     res.status(200).send(result);
-
   } catch (err: any) {
     if (req.statusCode === 200) {
       res.status(500);
@@ -54,9 +53,8 @@ app.get("/users", async (req: Request, res: Response) => {
 
 app.get("/products", async (req: Request, res: Response) => {
   try {
-    const result: TProducts[] = await db.raw(`SELECT * FROM products`);
+    const result: TProducts[] = await db("products");
     res.status(200).send(result);
-
   } catch (err: any) {
     if (req.statusCode === 200) {
       res.status(500);
@@ -75,66 +73,55 @@ app.get("/products", async (req: Request, res: Response) => {
 app.post("/users", async (req: Request, res: Response) => {
   try {
     const { id, name, email, password }: TUsers = req.body;
-    
-    if (!id || !name || !email || !password) {
-      res.status(400)
-      throw new Error('id, name, e-mail ou senha invalidos')
+
+    if (typeof id !== "string") {
+      res.status(400);
+      throw new Error("'Id' inválido, deve ser string");
+    }
+
+    if (typeof name !== "string") {
+      res.status(400);
+      throw new Error("'Name' inválido, deve ser string");
+    }
+
+    if (typeof email !== "string") {
+      res.status(400);
+      throw new Error("'E-mail' inválido, deve ser string");
+    }
+
+    if (typeof password !== "string") {
+      res.status(400);
+      throw new Error("'Password' inválido, deve ser string");
+    }
+
+    if (id.length < 1 || name.length < 1) {
+      res.status(400);
+      throw new Error("'id' e 'name' devem possuir no mínimo 1 caractere");
+    }
+
+    const newUser: TUsers = {
+      id,
+      name,
+      email,
+      password,
+    };
+
+    await db("users").insert(newUser);
+
+    res.status(200).send("Usuário cadastrado com sucesso!");
+  } catch (error: any) {
+    // erro padrão
+
+    if (req.statusCode === 200) {
+      res.status(500);
+    }
+
+    if (error instanceof Error) {
+      res.send(error.message);
+    } else {
+      res.send("Erro inesperado");
+    }
   }
-
-  await db.raw(
-      `INSERT INTO users (id, name, email, password)
-      VALUES('${id}', '${name}', '${email}', '${password}')`)
-      // recebendo os valores pelo body
-
-  res.status(200).send('Usuário cadastrado com sucesso!')
-
-} catch (error: any) {
-
-  // erro padrão
-
-  if (req.statusCode === 200) {
-      res.status(500)
-  }
-
-  if (error instanceof Error) {
-      res.send(error.message)
-  } else {
-      res.send("Erro inesperado")
-  }
-}
-
-    // if (verificaId) {
-    //   res.statusCode = 400;
-    //   throw new Error("Id já cadastrado.");
-    // }
-    // if (verificaEmail) {
-    //   res.statusCode = 400;
-    //   throw new Error("E-mail já cadastrado.");
-    // }
-    // if (typeof id !== "string") {
-    //   res.statusCode = 400;
-    //   throw new Error("'id' deve ser uma string");
-    // }
-    // if (typeof name !== "string") {
-    //   res.statusCode = 400;
-    //   throw new Error("'name' deve ser uma string");
-    // }
-    // if (typeof email !== "string") {
-    //   res.statusCode = 400;
-    //   throw new Error("'email' deve ser uma string");
-    // }
-    // if (typeof password !== "string") {
-    //   res.statusCode = 400;
-    //   throw new Error("'password' deve ser uma string");
-    // }
-
-    // const newUser: TUsers = {
-    //   id,
-    //   name,
-    //   email,
-    //   password,
-    // };
-    // users.push(newUser);
 });
 
 // Create products
@@ -142,98 +129,79 @@ app.post("/users", async (req: Request, res: Response) => {
 app.post("/products", async (req: Request, res: Response) => {
   try {
     const { id, name, price, description, imageUrl }: TProducts = req.body;
-    
-    if (!id || !name || !price || !description || !imageUrl) {
-      res.status(400)
-      throw new Error('id, name, price, description ou imageUrl inválidos.')
+
+    if (typeof id !== "string") {
+      res.status(400);
+      throw new Error("'id' inválido, deve ser string");
+    }
+
+    if (typeof name !== "string") {
+      res.status(400);
+      throw new Error("'name' inválido, deve ser string");
+    }
+
+    if (typeof price !== "string") {
+      res.status(400);
+      throw new Error("'Price' inválido, deve ser string");
+    }
+
+    if (typeof description !== "string") {
+      res.status(400);
+      throw new Error("'Description' inválido, deve ser string");
+    }
+
+    if (typeof imageUrl !== "string") {
+      res.status(400);
+      throw new Error("'ImageUrl' inválido, deve ser string");
+    }
+
+    if (id.length < 1 || name.length < 1) {
+      res.status(400);
+      throw new Error("'id' e 'name' devem possuir no mínimo 1 caractere");
+    }
+
+    const newProduct: TProducts = {
+      id,
+      name,
+      price,
+      description,
+      imageUrl,
+    };
+
+    await db("products").insert(newProduct);
+    res.status(200).send("Produto cadastrado com sucesso!");
+  } catch (error: any) {
+    // erro padrão
+
+    if (req.statusCode === 200) {
+      res.status(500);
+    }
+
+    if (error instanceof Error) {
+      res.send(error.message);
+    } else {
+      res.send("Erro inesperado");
+    }
   }
-
-  await db.raw(
-      `INSERT INTO products (id, name, price, description, imageUrl)
-      VALUES('${id}', '${name}', '${price}', '${description}', '${imageUrl}')`)
-      // recebendo os valores pelo body
-
-  res.status(200).send('Produto cadastrado com sucesso!')
-
-} catch (error: any) {
-
-  // erro padrão
-
-  if (req.statusCode === 200) {
-      res.status(500)
-  }
-
-  if (error instanceof Error) {
-      res.send(error.message)
-  } else {
-      res.send("Erro inesperado")
-  }
-}
-  // try {
-  //   const { id, name, price, description, imageUrl }: TProducts = req.body;
-  //   const verificaId: TProducts | undefined = products.find(
-  //     (product) => product.id === id
-  //   );
-
-  //   if (verificaId) {
-  //     res.statusCode = 400;
-  //     throw new Error("Id já cadastrado.");
-  //   }
-  //   if (typeof id !== "string") {
-  //     res.statusCode = 400;
-  //     throw new Error("'id' deve ser uma string");
-  //   }
-  //   if (typeof name !== "string") {
-  //     res.statusCode = 400;
-  //     throw new Error("'name' deve ser uma string");
-  //   }
-  //   if (typeof price !== "number") {
-  //     res.statusCode = 400;
-  //     throw new Error("'price' deve ser uma number");
-  //   }
-  //   if (typeof description !== "string") {
-  //     res.statusCode = 400;
-  //     throw new Error("'description' deve ser uma string");
-  //   }
-  //   if (typeof imageUrl !== "string") {
-  //     res.statusCode = 400;
-  //     throw new Error("'imageUrl' deve ser uma string");
-  //   }
-
-  //   const newProduct: TProducts = {
-  //     id,
-  //     name,
-  //     price,
-  //     description,
-  //     imageUrl,
-  //   };
-  //   products.push(newProduct);
-
-  //   res.status(201).send("Novo produto registrado com sucesso");
-  // } catch (err: any) {
-  //   if (err instanceof Error) {
-  //     res.send(err.message);
-  //   }
-  // }
 });
 
 // Delete user by id
 
-app.delete("/users/:id", (req: Request, res: Response) => {
+app.delete("/users/:id", async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
-    const indexToDelete = users.findIndex((user) => user.id === id);
-    const verificaId: TUsers | undefined = users.find((user) => user.id === id);
 
-    if (!verificaId) {
-      res.statusCode = 400;
-      throw new Error("Id não cadastrado.");
+    if (!id) {
+      throw new Error("Por Favor, informe o id a ser deletado!");
     }
 
-    if (indexToDelete !== -1) {
-      users.splice(indexToDelete, 1);
+    const [user] = await db("users").where({ id: id });
+
+    if (user) {
+      await db.delete().from("users").where({ id: id });
     } else {
-      console.log("Deu ruim, não encontrou o index para deletar");
+      res.status(404);
+      throw new Error("Id não encontrado!");
     }
 
     res.status(200).send("User deletado com sucesso!");
@@ -246,23 +214,21 @@ app.delete("/users/:id", (req: Request, res: Response) => {
 
 // Delete product by id
 
-app.delete("/products/:id", (req: Request, res: Response) => {
+app.delete("/products/:id", async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
-    const indexToDelete = products.findIndex((product) => product.id === id);
-    const verificaId: TProducts | undefined = products.find(
-      (product) => product.id === id
-    );
 
-    if (!verificaId) {
-      res.statusCode = 400;
-      throw new Error("Id não cadastrado.");
+    if (!id) {
+      throw new Error("Por Favor, informe o id a ser deletado!");
     }
 
-    if (indexToDelete !== -1) {
-      products.splice(indexToDelete, 1);
+    const [product] = await db("products").where({ id: id });
+
+    if (product) {
+      await db.delete().from("products").where({ id: id });
     } else {
-      console.log("Deu ruim, não encontrou o index para deletar");
+      res.status(404);
+      throw new Error("Id não encontrado!");
     }
 
     res.status(200).send("Product deletado com sucesso!");
@@ -275,61 +241,111 @@ app.delete("/products/:id", (req: Request, res: Response) => {
 
 // Update product by id
 
-app.put("/products/:id", (req: Request, res: Response) => {
+app.put("/products/:id", async (req: Request, res: Response) => {
   try {
     const id: string = req.params.id;
+    const newId = req.body.id as string | undefined;
     const newName = req.body.name as string | undefined;
     const newPrice = req.body.price as number | undefined;
     const newDescription = req.body.description as string | undefined;
     const newImageUrl = req.body.imageUrl as string | undefined;
 
-    const verificaId: TProducts | undefined = products.find(
-      (product) => product.id === id
-    );
-
-    console.log(newPrice);
-
-    if (!verificaId) {
+    if (typeof newId !== "string" && typeof newId !== "undefined") {
       res.statusCode = 400;
-      throw new Error("Id não cadastrado.");
+      throw new Error("'Id' inválido, deve ser string");
     }
-    if (typeof newName !== "string") {
+    if (typeof newName !== "string" && typeof newName !== "undefined") {
       res.statusCode = 400;
-      throw new Error("Name com tipo errado.");
+      throw new Error("'Name' inválido, deve ser string");
     }
     if (typeof newPrice !== "number" && typeof newPrice !== "undefined") {
       res.statusCode = 400;
-      throw new Error("Price com tipo errado.");
+      throw new Error("'Price' inválido, deve ser um number");
     }
-    if (typeof newDescription !== "string") {
+    if (
+      typeof newDescription !== "string" &&
+      typeof newDescription !== "undefined"
+    ) {
       res.statusCode = 400;
-      throw new Error("Description com tipo errado.");
+      throw new Error("'Description' inválido, deve ser string");
     }
     if (typeof newImageUrl !== "string" && typeof newImageUrl !== "undefined") {
       res.statusCode = 400;
-      throw new Error("ImageUrl com tipo errado.");
+      throw new Error("'ImageUrl' inválido, deve ser string");
     }
 
-    const product: TProducts | undefined = products.find(
-      (product) => product.id === id
-    );
+    const [product] = await db("products").where({ id: id });
 
     if (product) {
-      product.name = newName || product.name;
-      product.price = newPrice || product.price;
-      product.description = newDescription || product.description;
-      product.imageUrl = newImageUrl || product.imageUrl;
+      const updateProduct = {
+        id: newId || product.id,
+        name: newName || product.name,
+        price: newPrice || product.price,
+        description: newDescription || product.description,
+        imageUrl: newImageUrl || product.imageUrl,
+      };
+
+      await db.update(updateProduct).from("products").where({ id: id });
+    } else {
+      res.status(404);
+      throw new Error("'id' não encontrada");
     }
 
-    res.status(200).send("Produto atualizado com sucesso");
+    res.status(200).send({ message: "Atualização realizada com sucesso" });
   } catch (err: any) {
     if (err instanceof Error) {
       res.send(err.message);
     }
+  }
+});
 
-    // se chegar ainda valendo 200 sabemos que foi um erro inesperado
-    // if (res.statusCode === 200) {
-    //   res.status(500) // definimos 500 porque é algo que o servidor não previu
-    // }
+// Update user by id
+
+app.put("/users/:id", async (req: Request, res: Response) => {
+  try {
+    const id: string = req.params.id;
+    const newId = req.body.id as string | undefined;
+    const newName = req.body.name as string | undefined;
+    const newEmail = req.body.email as string | undefined;
+    const newPassword = req.body.password as number | undefined;
+
+    if (typeof newId !== "string" && typeof newId !== "undefined") {
+      res.statusCode = 400;
+      throw new Error("'Id' inválido, deve ser string");
+    }
+    if (typeof newName !== "string" && typeof newName !== "undefined") {
+      res.statusCode = 400;
+      throw new Error("'Name' inválido, deve ser string");
+    }
+    if (typeof newEmail !== "string" && typeof newId !== "undefined") {
+      res.statusCode = 400;
+      throw new Error("'Email' inválido, deve ser string");
+    }
+    if (typeof newPassword !== "string" && typeof newName !== "undefined") {
+      res.statusCode = 400;
+      throw new Error("'Password' inválido, deve ser string");
+    }
+
+    const [user] = await db("users").where({ id: id });
+
+    if (user) {
+      const updateUser = {
+        id: newId || user.id,
+        name: newName || user.name,
+        price: newEmail || user.email,
+        description: newPassword || user.password,
+      };
+
+      await db.update(updateUser).from("users").where({ id: id });
+    } else {
+      res.status(404);
+      throw new Error("'id' não encontrada");
+    }
+
+    res.status(200).send({ message: "Atualização realizada com sucesso" });
+  } catch (err: any) {
+    if (err instanceof Error) {
+      res.send(err.message);
+    }
   }
 });
