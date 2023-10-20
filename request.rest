@@ -11,7 +11,7 @@ POST http://localhost:3003/users
 Content-Type: application/json
 
 {
-    "id": "u003",
+    "id": "u005",
     "name": "Astrodev",
     "email": "astrodev@email.com",
     "password": "astrodev00"
@@ -22,11 +22,32 @@ POST http://localhost:3003/products
 Content-Type: application/json
 
 {
-    "id": "prod003",
-    "name": "Teclado gamer",
-    "price": 200,
-    "description": "Teclado mecânico com numpad",
-    "imageUrl": "https://picsum.photos/seed/Teclado%20gamer/400"
+    "id": "p003",
+    "name": "nave mae",
+    "price": 2000000,
+    "description": "nave gigante",
+    "image_url": "https://picsum.photos/seed/Teclado%20gamer/400"
 }
 ###
 
+DELETE http://localhost:3003/users/u002
+###
+
+DELETE http://localhost:3003/products/p002
+###
+
+PUT http://localhost:3003/users/u004
+Content-Type: application/json
+
+{
+    "name": "Marciano"
+}
+###
+
+PUT http://localhost:3003/products/p004
+Content-Type: application/json
+
+{
+    "name": "nave a outra"
+}
+###

@@ -128,7 +128,7 @@ app.post("/users", async (req: Request, res: Response) => {
 
 app.post("/products", async (req: Request, res: Response) => {
   try {
-    const { id, name, price, description, imageUrl }: TProducts = req.body;
+    const { id, name, price, description, image_url }: TProducts = req.body;
 
     if (typeof id !== "string") {
       res.status(400);
@@ -140,7 +140,7 @@ app.post("/products", async (req: Request, res: Response) => {
       throw new Error("'name' inválido, deve ser string");
     }
 
-    if (typeof price !== "string") {
+    if (typeof price !== "number") {
       res.status(400);
       throw new Error("'Price' inválido, deve ser string");
     }
@@ -150,9 +150,9 @@ app.post("/products", async (req: Request, res: Response) => {
       throw new Error("'Description' inválido, deve ser string");
     }
 
-    if (typeof imageUrl !== "string") {
+    if (typeof image_url !== "string") {
       res.status(400);
-      throw new Error("'ImageUrl' inválido, deve ser string");
+      throw new Error("'image_url' inválido, deve ser string");
     }
 
     if (id.length < 1 || name.length < 1) {
@@ -165,7 +165,7 @@ app.post("/products", async (req: Request, res: Response) => {
       name,
       price,
       description,
-      imageUrl,
+      image_url,
     };
 
     await db("products").insert(newProduct);
@@ -248,7 +248,7 @@ app.put("/products/:id", async (req: Request, res: Response) => {
     const newName = req.body.name as string | undefined;
     const newPrice = req.body.price as number | undefined;
     const newDescription = req.body.description as string | undefined;
-    const newImageUrl = req.body.imageUrl as string | undefined;
+    const newimage_url = req.body.image_url as string | undefined;
 
     if (typeof newId !== "string" && typeof newId !== "undefined") {
       res.statusCode = 400;
@@ -269,9 +269,9 @@ app.put("/products/:id", async (req: Request, res: Response) => {
       res.statusCode = 400;
       throw new Error("'Description' inválido, deve ser string");
     }
-    if (typeof newImageUrl !== "string" && typeof newImageUrl !== "undefined") {
+    if (typeof newimage_url !== "string" && typeof newimage_url !== "undefined") {
       res.statusCode = 400;
-      throw new Error("'ImageUrl' inválido, deve ser string");
+      throw new Error("'image_url' inválido, deve ser string");
     }
 
     const [product] = await db("products").where({ id: id });
@@ -282,7 +282,7 @@ app.put("/products/:id", async (req: Request, res: Response) => {
         name: newName || product.name,
         price: newPrice || product.price,
         description: newDescription || product.description,
-        imageUrl: newImageUrl || product.imageUrl,
+        image_url: newimage_url || product.image_url,
       };
 
       await db.update(updateProduct).from("products").where({ id: id });
@@ -307,7 +307,7 @@ app.put("/users/:id", async (req: Request, res: Response) => {
     const newId = req.body.id as string | undefined;
     const newName = req.body.name as string | undefined;
     const newEmail = req.body.email as string | undefined;
-    const newPassword = req.body.password as number | undefined;
+    const newPassword = req.body.password as string | undefined;
 
     if (typeof newId !== "string" && typeof newId !== "undefined") {
       res.statusCode = 400;
@@ -317,11 +317,11 @@ app.put("/users/:id", async (req: Request, res: Response) => {
       res.statusCode = 400;
       throw new Error("'Name' inválido, deve ser string");
     }
-    if (typeof newEmail !== "string" && typeof newId !== "undefined") {
+    if (typeof newEmail !== "string" && typeof newEmail !== "undefined") {
       res.statusCode = 400;
       throw new Error("'Email' inválido, deve ser string");
     }
-    if (typeof newPassword !== "string" && typeof newName !== "undefined") {
+    if (typeof newPassword !== "string" && typeof newPassword !== "undefined") {
       res.statusCode = 400;
       throw new Error("'Password' inválido, deve ser string");
     }
@@ -332,8 +332,8 @@ app.put("/users/:id", async (req: Request, res: Response) => {
       const updateUser = {
         id: newId || user.id,
         name: newName || user.name,
-        price: newEmail || user.email,
-        description: newPassword || user.password,
+        email: newEmail || user.email,
+        password: newPassword || user.password,
       };
 
       await db.update(updateUser).from("users").where({ id: id });

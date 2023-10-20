@@ -1,3 +1,4 @@
+-- Active: 1697764975191@@127.0.0.1@3306
 CREATE TABLE users (
 	id TEXT PRIMARY KEY UNIQUE NOT NULL,
   name TEXT NOT NULL,
@@ -10,15 +11,8 @@ INSERT INTO users (id, name, email, password)
 VALUES 
 ('u001', 'mariano', 'mariano@email.com', 'hjabcs'),
 ('u002', 'luciano', 'luciano@email.com', 'hasxjabcs'),
-('u003', 'adriano', 'adriano@email.com', 'hjabgbvwscs');
-
-SELECT * FROM users;
-
-INSERT INTO users (id, name, email, password)
-VALUES ('u004', 'cassiano', 'cassiano@taldoemail.com', 'vsdvsd');
-
-DELETE FROM users
-WHERE id = 'u003';
+('u003', 'adriano', 'adriano@email.com', 'hjabgbvwscs')
+('u004', 'cassiano', 'cassiano@taldoemail.com', 'vsdvsd');
 
 DROP TABLE users;
 
@@ -38,28 +32,8 @@ VALUES
 ('p002', 'foguete colossal', 3800000, 'foguete de carga planetário', 'https://picsum.photos/seed/Rocket/400'),
 ('p003', 'foguete pequeno', 12000, 'foguete de carga pequeno', 'https://picsum.photos/seed/Rocket/400'),
 ('p004', 'nave individual', 18000, 'nave para viagens solo', 'https://picsum.photos/seed/Rocket/400'),
-('p005', 'nave militar', 340000, 'nave de guerra', 'https://picsum.photos/seed/Rocket/400');
-
-SELECT * FROM products;
-
-SELECT * FROM products
-WHERE name LIKE '%nave%';
-
-INSERT INTO products (id, name, price, description, image_url)
-VALUES 
+('p005', 'nave militar', 340000, 'nave de guerra', 'https://picsum.photos/seed/Rocket/400')
 ('p006', 'nave de luxo', 420000, 'nave cruzeiro', 'https://picsum.photos/seed/Rocket/400');
-
-DELETE FROM products
-WHERE id = 'p003';
-
-UPDATE products
-SET
-id = 'p002',
-name = 'nave colossal',
-price = 390000000,
-description = 'nave de carga planetária',
-image_url = 'https://picsum.photos/seed/Rocket/400'
-WHERE id = 'p002';
 
 DROP TABLE products;
 
@@ -82,20 +56,13 @@ VALUES
 ('P003', 'u003', 47642),
 ('P004', 'u004', 76438);
 
-SELECT * FROM purchases;
-
-UPDATE purchases
-SET 
-total_price = 777777
-WHERE id = 'P001';
-
 SELECT purchases.id, purchases.buyer, users.name, users.email, purchases.total_price AS 'Custo', purchases.created_at AS 'Data da Compra' FROM purchases
 INNER JOIN users 
 ON users.id = purchases.buyer
 
 DROP TABLE purchases;
 
--- Exercicio relações SQL 2 (m:n)
+-- relações SQL 2 (m:n)
 
 CREATE TABLE purchases_products (
   purchase_id TEXT NOT NULL,
