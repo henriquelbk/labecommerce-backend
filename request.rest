@@ -4,7 +4,10 @@ GET http://localhost:3003/ping
 GET http://localhost:3003/users
 ###
 
-GET http://localhost:3003/products
+GET http://localhost:3003/products?name=nave
+###
+
+GET http://localhost:3003/purchases/P001
 ###
 
 POST http://localhost:3003/users
@@ -22,7 +25,7 @@ POST http://localhost:3003/products
 Content-Type: application/json
 
 {
-    "id": "p003",
+    "id": "p002",
     "name": "nave mae",
     "price": 2000000,
     "description": "nave gigante",
@@ -30,10 +33,24 @@ Content-Type: application/json
 }
 ###
 
+POST http://localhost:3003/purchases
+Content-Type: application/json
+
+{
+    "id": "P006",
+    "buyer": "u003",
+    "total_price": 2136845
+}
+###
+
+
 DELETE http://localhost:3003/users/u002
 ###
 
 DELETE http://localhost:3003/products/p002
+###
+
+DELETE http://localhost:3003/purchases/P002
 ###
 
 PUT http://localhost:3003/users/u004

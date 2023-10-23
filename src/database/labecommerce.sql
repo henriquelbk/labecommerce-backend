@@ -32,7 +32,7 @@ VALUES
 ('p002', 'foguete colossal', 3800000, 'foguete de carga planetário', 'https://picsum.photos/seed/Rocket/400'),
 ('p003', 'foguete pequeno', 12000, 'foguete de carga pequeno', 'https://picsum.photos/seed/Rocket/400'),
 ('p004', 'nave individual', 18000, 'nave para viagens solo', 'https://picsum.photos/seed/Rocket/400'),
-('p005', 'nave militar', 340000, 'nave de guerra', 'https://picsum.photos/seed/Rocket/400')
+('p005', 'nave militar', 340000, 'nave de guerra', 'https://picsum.photos/seed/Rocket/400'),
 ('p006', 'nave de luxo', 420000, 'nave cruzeiro', 'https://picsum.photos/seed/Rocket/400');
 
 DROP TABLE products;
@@ -44,8 +44,8 @@ CREATE TABLE purchases (
   buyer TEXT NOT NULL,
   total_price REAL NOT NULL,
   created_at TEXT DEFAULT(DATETIME('now', 'localtime')) NOT NULL,
-  FOREIGN KEY(buyer) REFERENCES users(id)
-  ON UPDATE CASCADE
+  FOREIGN KEY (buyer) REFERENCES users (id)
+  ON UPDATE CASCADE,
   ON DELETE CASCADE
 );
 
@@ -55,10 +55,6 @@ VALUES
 ('P002', 'u002', 6432),
 ('P003', 'u003', 47642),
 ('P004', 'u004', 76438);
-
-SELECT purchases.id, purchases.buyer, users.name, users.email, purchases.total_price AS 'Custo', purchases.created_at AS 'Data da Compra' FROM purchases
-INNER JOIN users 
-ON users.id = purchases.buyer
 
 DROP TABLE purchases;
 
@@ -70,7 +66,7 @@ CREATE TABLE purchases_products (
   quantity INTEGER NOT NULL,
   FOREIGN KEY (purchase_id) REFERENCES purchases (id) 
   FOREIGN KEY (product_id) REFERENCES products (id)
-  ON UPDATE CASCADE
+  ON UPDATE CASCADE,
   ON DELETE CASCADE
 );
 

@@ -53,18 +53,45 @@ app.get("/users", async (req: Request, res: Response) => {
 
 app.get("/products", async (req: Request, res: Response) => {
   try {
-    const result: TProducts[] = await db("products");
-    res.status(200).send(result);
+    const { name } = req.query;
+
+    if (name) {
+
+      const result: TProducts[] = await db("products").where("name", "like", `%${name}%`);
+      res.status(200).send(result);
+
+    } else {
+
+      const result: TProducts[] = await db("products");
+      res.status(200).send(result);
+
+    }
   } catch (err: any) {
-    if (req.statusCode === 200) {
-      res.status(500);
+    console.error(err); 
+    res.status(500).json({ error: "Erro inesperado." });
+  }
+});
+
+// GET Purchase by id // Verificar lógica
+
+app.get("/purchases/:id", async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    if (!id) {
+      throw new Error("Por favor, forneça um ID válido.");
     }
 
-    if (err instanceof Error) {
-      res.send(err.message);
+    const purchase = await db("purchases").where({ id }).first();
+
+    if (purchase) {
+      res.status(200).json(purchase);
     } else {
-      res.send("Erro inesperado");
+      res.status(404).json({ error: "Compra não encontrada." });
     }
+  } catch (err: any) {
+    console.error(err); 
+    res.status(500).json({ error: "Erro inesperado." });
   }
 });
 
@@ -185,6 +212,55 @@ app.post("/products", async (req: Request, res: Response) => {
   }
 });
 
+// Create purchase
+
+app.post("/purchases", async (req: Request, res: Response) => {
+  try {
+    const { id, buyer, total_price } = req.body;
+
+    if (typeof id !== "string") {
+      res.status(400);
+      throw new Error("'id' inválido, deve ser string");
+    }
+
+    if (typeof buyer !== "string") {
+      res.status(400);
+      throw new Error("'name' inválido, deve ser string");
+    }
+
+    if (typeof total_price !== "number") {
+      res.status(400);
+      throw new Error("'Price' inválido, deve ser string");
+    }
+
+    if (id.length < 1 ||  buyer.length < 1 || total_price < 0) {
+      res.status(400);
+      throw new Error("'id' e 'Comprador' devem possuir no mínimo 1 caractere e o preço da compra deve ser maior do que 0.");
+    }
+
+    const newPurchase = {
+      id,
+      buyer,
+      total_price,
+    };
+
+    await db("purchases").insert(newPurchase);
+    res.status(200).send("Compra cadastrado com sucesso!");
+  } catch (error: any) {
+    // erro padrão
+
+    if (req.statusCode === 200) {
+      res.status(500);
+    }
+
+    if (error instanceof Error) {
+      res.send(error.message);
+    } else {
+      res.send("Erro inesperado");
+    }
+  }
+});
+
 // Delete user by id
 
 app.delete("/users/:id", async (req: Request, res: Response) => {
@@ -232,6 +308,33 @@ app.delete("/products/:id", async (req: Request, res: Response) => {
     }
 
     res.status(200).send("Product deletado com sucesso!");
+  } catch (err: any) {
+    if (err instanceof Error) {
+      res.send(err.message);
+    }
+  }
+});
+
+// Delete purchase by id
+
+app.delete("/purchases/:id", async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    if (!id) {
+      throw new Error("Por Favor, informe o id a ser deletado!");
+    }
+
+    const [purchase] = await db("purchases").where({ id: id });
+
+    if (purchase) {
+      await db.delete().from("purchases").where({ id: id });
+    } else {
+      res.status(404);
+      throw new Error("Id não encontrado!");
+    }
+
+    res.status(200).send("Compra deletada com sucesso!");
   } catch (err: any) {
     if (err instanceof Error) {
       res.send(err.message);
