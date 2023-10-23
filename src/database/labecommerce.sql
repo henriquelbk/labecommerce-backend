@@ -44,9 +44,7 @@ CREATE TABLE purchases (
   buyer TEXT NOT NULL,
   total_price REAL NOT NULL,
   created_at TEXT DEFAULT(DATETIME('now', 'localtime')) NOT NULL,
-  FOREIGN KEY (buyer) REFERENCES users (id)
-  ON UPDATE CASCADE,
-  ON DELETE CASCADE
+  FOREIGN KEY (buyer) REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 INSERT INTO purchases (id, buyer, total_price)
@@ -64,10 +62,8 @@ CREATE TABLE purchases_products (
   purchase_id TEXT NOT NULL,
   product_id TEXT NOT NULL,
   quantity INTEGER NOT NULL,
-  FOREIGN KEY (purchase_id) REFERENCES purchases (id) 
-  FOREIGN KEY (product_id) REFERENCES products (id)
-  ON UPDATE CASCADE,
-  ON DELETE CASCADE
+  FOREIGN KEY (purchase_id) REFERENCES purchases (id) ON UPDATE CASCADE ON DELETE CASCADE,
+  FOREIGN KEY (product_id) REFERENCES products (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 INSERT INTO purchases_products
