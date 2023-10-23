@@ -53,18 +53,45 @@ app.get("/users", async (req: Request, res: Response) => {
 
 app.get("/products", async (req: Request, res: Response) => {
   try {
-    const result: TProducts[] = await db("products");
-    res.status(200).send(result);
+    const { name } = req.query;
+
+    if (name) {
+
+      const result: TProducts[] = await db("products").where("name", "like", `%${name}%`);
+      res.status(200).send(result);
+
+    } else {
+
+      const result: TProducts[] = await db("products");
+      res.status(200).send(result);
+
+    }
   } catch (err: any) {
-    if (req.statusCode === 200) {
-      res.status(500);
+    console.error(err); 
+    res.status(500).json({ error: "Erro inesperado." });
+  }
+});
+
+// GET Purchase by id // Verificar lógica
+
+app.get("/purchases/:id", async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    if (!id) {
+      throw new Error("Por favor, forneça um ID válido.");
     }
 
-    if (err instanceof Error) {
-      res.send(err.message);
+    const purchase = await db("purchases").where({ id }).first();
+
+    if (purchase) {
+      res.status(200).json(purchase);
     } else {
-      res.send("Erro inesperado");
+      res.status(404).json({ error: "Compra não encontrada." });
     }
+  } catch (err: any) {
+    console.error(err); 
+    res.status(500).json({ error: "Erro inesperado." });
   }
 });
 
@@ -128,7 +155,7 @@ app.post("/users", async (req: Request, res: Response) => {
 
 app.post("/products", async (req: Request, res: Response) => {
   try {
-    const { id, name, price, description, imageUrl }: TProducts = req.body;
+    const { id, name, price, description, image_url }: TProducts = req.body;
 
     if (typeof id !== "string") {
       res.status(400);
@@ -140,7 +167,7 @@ app.post("/products", async (req: Request, res: Response) => {
       throw new Error("'name' inválido, deve ser string");
     }
 
-    if (typeof price !== "string") {
+    if (typeof price !== "number") {
       res.status(400);
       throw new Error("'Price' inválido, deve ser string");
     }
@@ -150,9 +177,9 @@ app.post("/products", async (req: Request, res: Response) => {
       throw new Error("'Description' inválido, deve ser string");
     }
 
-    if (typeof imageUrl !== "string") {
+    if (typeof image_url !== "string") {
       res.status(400);
-      throw new Error("'ImageUrl' inválido, deve ser string");
+      throw new Error("'image_url' inválido, deve ser string");
     }
 
     if (id.length < 1 || name.length < 1) {
@@ -165,11 +192,60 @@ app.post("/products", async (req: Request, res: Response) => {
       name,
       price,
       description,
-      imageUrl,
+      image_url,
     };
 
     await db("products").insert(newProduct);
     res.status(200).send("Produto cadastrado com sucesso!");
+  } catch (error: any) {
+    // erro padrão
+
+    if (req.statusCode === 200) {
+      res.status(500);
+    }
+
+    if (error instanceof Error) {
+      res.send(error.message);
+    } else {
+      res.send("Erro inesperado");
+    }
+  }
+});
+
+// Create purchase
+
+app.post("/purchases", async (req: Request, res: Response) => {
+  try {
+    const { id, buyer, total_price } = req.body;
+
+    if (typeof id !== "string") {
+      res.status(400);
+      throw new Error("'id' inválido, deve ser string");
+    }
+
+    if (typeof buyer !== "string") {
+      res.status(400);
+      throw new Error("'name' inválido, deve ser string");
+    }
+
+    if (typeof total_price !== "number") {
+      res.status(400);
+      throw new Error("'Price' inválido, deve ser string");
+    }
+
+    if (id.length < 1 ||  buyer.length < 1 || total_price < 0) {
+      res.status(400);
+      throw new Error("'id' e 'Comprador' devem possuir no mínimo 1 caractere e o preço da compra deve ser maior do que 0.");
+    }
+
+    const newPurchase = {
+      id,
+      buyer,
+      total_price,
+    };
+
+    await db("purchases").insert(newPurchase);
+    res.status(200).send("Compra cadastrado com sucesso!");
   } catch (error: any) {
     // erro padrão
 
@@ -239,6 +315,33 @@ app.delete("/products/:id", async (req: Request, res: Response) => {
   }
 });
 
+// Delete purchase by id
+
+app.delete("/purchases/:id", async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    if (!id) {
+      throw new Error("Por Favor, informe o id a ser deletado!");
+    }
+
+    const [purchase] = await db("purchases").where({ id: id });
+
+    if (purchase) {
+      await db.delete().from("purchases").where({ id: id });
+    } else {
+      res.status(404);
+      throw new Error("Id não encontrado!");
+    }
+
+    res.status(200).send("Compra deletada com sucesso!");
+  } catch (err: any) {
+    if (err instanceof Error) {
+      res.send(err.message);
+    }
+  }
+});
+
 // Update product by id
 
 app.put("/products/:id", async (req: Request, res: Response) => {
@@ -248,7 +351,7 @@ app.put("/products/:id", async (req: Request, res: Response) => {
     const newName = req.body.name as string | undefined;
     const newPrice = req.body.price as number | undefined;
     const newDescription = req.body.description as string | undefined;
-    const newImageUrl = req.body.imageUrl as string | undefined;
+    const newimage_url = req.body.image_url as string | undefined;
 
     if (typeof newId !== "string" && typeof newId !== "undefined") {
       res.statusCode = 400;
@@ -269,9 +372,9 @@ app.put("/products/:id", async (req: Request, res: Response) => {
       res.statusCode = 400;
       throw new Error("'Description' inválido, deve ser string");
     }
-    if (typeof newImageUrl !== "string" && typeof newImageUrl !== "undefined") {
+    if (typeof newimage_url !== "string" && typeof newimage_url !== "undefined") {
       res.statusCode = 400;
-      throw new Error("'ImageUrl' inválido, deve ser string");
+      throw new Error("'image_url' inválido, deve ser string");
     }
 
     const [product] = await db("products").where({ id: id });
@@ -282,7 +385,7 @@ app.put("/products/:id", async (req: Request, res: Response) => {
         name: newName || product.name,
         price: newPrice || product.price,
         description: newDescription || product.description,
-        imageUrl: newImageUrl || product.imageUrl,
+        image_url: newimage_url || product.image_url,
       };
 
       await db.update(updateProduct).from("products").where({ id: id });
@@ -307,7 +410,7 @@ app.put("/users/:id", async (req: Request, res: Response) => {
     const newId = req.body.id as string | undefined;
     const newName = req.body.name as string | undefined;
     const newEmail = req.body.email as string | undefined;
-    const newPassword = req.body.password as number | undefined;
+    const newPassword = req.body.password as string | undefined;
 
     if (typeof newId !== "string" && typeof newId !== "undefined") {
       res.statusCode = 400;
@@ -317,11 +420,11 @@ app.put("/users/:id", async (req: Request, res: Response) => {
       res.statusCode = 400;
       throw new Error("'Name' inválido, deve ser string");
     }
-    if (typeof newEmail !== "string" && typeof newId !== "undefined") {
+    if (typeof newEmail !== "string" && typeof newEmail !== "undefined") {
       res.statusCode = 400;
       throw new Error("'Email' inválido, deve ser string");
     }
-    if (typeof newPassword !== "string" && typeof newName !== "undefined") {
+    if (typeof newPassword !== "string" && typeof newPassword !== "undefined") {
       res.statusCode = 400;
       throw new Error("'Password' inválido, deve ser string");
     }
@@ -332,8 +435,8 @@ app.put("/users/:id", async (req: Request, res: Response) => {
       const updateUser = {
         id: newId || user.id,
         name: newName || user.name,
-        price: newEmail || user.email,
-        description: newPassword || user.password,
+        email: newEmail || user.email,
+        password: newPassword || user.password,
       };
 
       await db.update(updateUser).from("users").where({ id: id });
